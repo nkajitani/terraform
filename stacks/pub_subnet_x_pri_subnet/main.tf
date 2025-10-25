@@ -1,7 +1,5 @@
 /*
-  IGW and public subnet stack
-  memo:
-    create automatically Route Table
+  public and private subnets stack
 */
 # local values
 locals {
@@ -20,9 +18,11 @@ locals {
 resource "aws_vpc" "main" {
   cidr_block = "10.0.0.0/16"
   instance_tenancy = "default"
+  enable_dns_hostnames = true
+  enable_dns_support = true
 
   tags = {
-    Name = "study-public"
+    Name = "study-vpc"
   }
 }
 
@@ -62,21 +62,25 @@ resource "aws_subnet" "private" {
 }
 
 # EIP
-resource "aws_eip" "nat" {
+resource "aws_eip" "nats" {
   domain = "vpc"
 
+  for_each = local.public_subnets
+
   tags = {
-    Name = "study-nat-eip"
+    Name = "study-nat-eip-${each.value.az_suffix}"
   }
 }
 
 # NAT Gateway
-resource "aws_nat_gateway" "nat" {
-  allocation_id = aws_eip.nat.id
-  subnet_id    = aws_subnet.public["a"].id
+resource "aws_nat_gateway" "nats" {
+  for_each = local.public_subnets
+
+  allocation_id = aws_eip.nats[each.key].id
+  subnet_id     = aws_subnet.public[each.key].id
 
   tags = {
-    Name = "study-nat-gateway"
+    Name = "study-nat-gateway-${each.value.az_suffix}"
   }
 
   depends_on = [ aws_internet_gateway.gw ]
@@ -97,7 +101,7 @@ resource "aws_route_table" "public_rt" {
 }
 
 # Route Table Association for public subnet
-resource "aws_route_table_association" "public_rta" {
+resource "aws_route_table_association" "public_rts" {
   for_each = local.public_subnets
 
   route_table_id = aws_route_table.public_rt.id
@@ -105,23 +109,24 @@ resource "aws_route_table_association" "public_rta" {
 }
 
 # Route Table for private subnet
-resource "aws_route_table" "private_rt" {
+resource "aws_route_table" "private_rts" {
   vpc_id = aws_vpc.main.id
+  for_each = local.private_subnets
 
   route {
     cidr_block = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat.id
+    nat_gateway_id = aws_nat_gateway.nats[each.key].id
   }
 
   tags = {
-    Name = "study-private-rt"
+    Name = "study-private-rt-${each.value.az_suffix}"
   }
 }
 
 # Route Table Association for private subnet
-resource "aws_route_table_association" "private_rta" {
+resource "aws_route_table_association" "private_rts" {
   for_each = local.private_subnets
 
-  route_table_id = aws_route_table.private_rt.id
+  route_table_id = aws_route_table.private_rts[each.key].id
   subnet_id      = aws_subnet.private[each.key].id
 }
