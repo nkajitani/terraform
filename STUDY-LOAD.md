@@ -1,14 +1,16 @@
    Phase 1: ネットワーク基礎の強化
 
      - VPC + Public/Private Subnet + NAT Gateway
+     - スタック: stacks/pub_subnet_x_pri_subnet/
 
    Phase 2: セキュリティとアクセス制御
 
      - Security Group の管理
      - Network ACL の設定
      - VPC Endpoints (S3, EC2など)
+     - スタック: stacks/security_stack/
 
-   Phase 3: コンピューティングリソース
+   Phase 3: コンピューティングリソース ⬜ 次のステップ
 
      - EC2 + Security Group + Key Pair
      - ALB + Target Group + EC2

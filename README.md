@@ -6,12 +6,13 @@ TerraformでAWSリソースを構築する学習用プロジェクト
 
 ```
 terraform/
-├── components/        # コンポーネント
-│   ├── ec2/          # EC2インスタンス
-│   ├── pub_subnet/   # パブリックサブネット
-│   └── vpc/          # VPC
-└── stacks/           # スタック（複数コンポーネント組み合わせ）
-    └── pub_subnet_x_pri_subnet/  # パブリック・プライベートサブネット構成
+├── components/                   # 基礎学習用コンポーネント
+│   ├── ec2/                     # EC2インスタンス
+│   ├── pub_subnet/              # パブリックサブネット
+│   └── vpc/                     # VPC
+└── stacks/                       # 実践用スタック（複数コンポーネント組み合わせ）
+    ├── pub_subnet_x_pri_subnet/ # Phase1: VPC + Public/Private Subnet + NAT Gateway
+    └── security_stack/          # Phase2: Security Groups + Network ACL + VPC Endpoints
 ```
 
 ## 使用方法
