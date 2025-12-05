@@ -33,3 +33,44 @@ variable "subnets" {
     }
   }
 }
+
+variable "web_instance" {
+  description = "Configuration for the web instance"
+  type = object({
+    instance_type = string
+  })
+  default = {
+    instance_type = "t3.micro"
+  }
+}
+
+variable "aurora_username" {
+  description = "The master username for the Aurora database"
+  type        = string
+  default     = "admin"
+}
+
+variable "aurora_password" {
+  description = "The master password for the Aurora database"
+  type        = string
+  sensitive   = true
+  default     = "password"
+}
+
+variable "aurora_version" {
+  description = "The version of Aurora MySQL to use"
+  type        = string
+  default     = "8.0.mysql_aurora.3.10.1"
+}
+
+variable "aurora_engine" {
+  description = "The database engine for Aurora"
+  type        = string
+  default     = "aurora-mysql"
+}
+
+variable "aurora_instance_class" {
+  description = "The instance class for Aurora instances"
+  type        = string
+  default     = "db.t3.medium"
+}
